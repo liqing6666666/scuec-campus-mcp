@@ -1,6 +1,26 @@
 # SCUEC Campus MCP Server
 
-中南民族大学校园百事通 MCP Server — 为 MaxKB 等 AI 平台提供校园设施查询、导航等能力。
+中南民族大学校园百事通 MCP Server — 为 MaxKB、Claude Desktop 等 AI 平台提供校园设施查询、导航等能力。
+
+## 安装与运行
+
+```bash
+pip install "mcp[cli]"
+python server.py
+```
+
+## MCP 客户端配置
+
+```json
+{
+  "mcpServers": {
+    "scuec-campus-mcp": {
+      "command": "python",
+      "args": ["server.py"]
+    }
+  }
+}
+```
 
 ## 工具
 
@@ -22,16 +42,13 @@
 | `campus://categories` | 6 个分类定义 |
 | `campus://outline` | 校园轮廓 24 个坐标点 |
 
-## 使用
-
-### 本地调试
+## 本地调试
 
 ```bash
-pip install "mcp[cli]"
 mcp dev server.py
 ```
 
-### MaxKB 配置
+## MaxKB 配置
 
 ```json
 {
@@ -40,12 +57,6 @@ mcp dev server.py
     "transport": "sse"
   }
 }
-```
-
-### SSE 模式启动
-
-```bash
-python server.py --sse
 ```
 
 ## 数据
