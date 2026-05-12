@@ -367,9 +367,12 @@ def get_outline_resource() -> str:
 
 
 # ===== 入口 =====
-if __name__ == "__main__":
+def main():
     import sys
     if "--sse" in sys.argv:
         mcp.run(transport="sse")
     else:
         mcp.run()
+
+if __name__ == "__main__":
+    main()
