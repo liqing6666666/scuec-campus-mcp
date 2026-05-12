@@ -370,7 +370,6 @@ def get_outline_resource() -> str:
 if __name__ == "__main__":
     import sys
     if "--sse" in sys.argv:
-        print("Starting in SSE mode on http://127.0.0.1:8000")
         mcp.run(transport="sse")
     else:
-        mcp.run()  # stdio mode (for mcp dev / MCP Inspector)
+        mcp.run()
