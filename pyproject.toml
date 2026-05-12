@@ -4,7 +4,8 @@ version = "1.0.0"
 description = "中南民族大学校园百事通 MCP Server"
 requires-python = ">=3.10"
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp[cli]>=1.0.0",
+    "uvicorn>=0.31.0",
 ]
 
 [project.scripts]
