@@ -475,21 +475,23 @@ function onAMapLoaded() {
         });
     };
 
-    // 初始不显示任何标记，点击时才展示
-
     // 渲染侧边栏
     renderSidebar();
 
     // URL 参数跳转
     const params = new URLSearchParams(window.location.search);
     const targetPOI = params.get('poi');
+
+    // 优先定位用户位置
+    setTimeout(() => locateMe(), 500);
+
     if (targetPOI) {
         const name = decodeURIComponent(targetPOI);
         const found = campusPOIs.find(p => p.name === name);
         if (found) setTimeout(() => {
             window._addMarkers([found]);
             showInfoPanel(found);
-        }, 800);
+        }, 1200);
     }
 }
 
