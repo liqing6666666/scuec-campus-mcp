@@ -370,7 +370,7 @@ def get_outline_resource() -> str:
 def main():
     import sys
     if "--sse" in sys.argv:
-        mcp.run(transport="sse")
+        mcp.run(transport="sse", host="0.0.0.0", port=8000)
     else:
         mcp.run()
 
