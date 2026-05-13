@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中南民族大学 - 校园百事通地图</title>
+    <link rel="stylesheet" href="./campus-map.css">
+</head>
+
+<body>
+    <div class="header">
+        <h1>中南民族大学</h1>
+        <span class="subtitle">校园百事通 · 新生导航地图</span>
+    </div>
+
+    <div class="main-layout">
+        <!-- 左侧分类栏 -->
+        <div class="sidebar">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索地点..." oninput="filterPOIs()" />
+            </div>
+            <div id="sidebarList"></div>
+        </div>
+
+        <!-- 地图 -->
+        <div id="container" style="position:relative;">
+            <div class="pick-toolbar">
+                <button class="pick-btn" onclick="locateMe()">📍 我的位置</button>
+                <button class="pick-btn" id="locateManual" onclick="startManualLocate()">📌 手动设置位置</button>
+                <button class="pick-btn" onclick="locateUniversity()">🏫 中南民族大学</button>
+                <button class="pick-btn" id="pickToggle" onclick="togglePickMode()">坐标拾取模式</button>
+                <button class="pick-btn" onclick="exportCoords()">导出所有坐标</button>
+            </div>
+            <div class="coord-popup" id="coordPopup"></div>
+        </div>
+
+        <!-- 信息面板 -->
+        <div class="info-panel" id="infoPanel">
+            <div class="info-header">
+                <div class="info-close" onclick="closeInfoPanel()">&times;</div>
+                <h3 id="infoTitle"></h3>
+                <div class="info-cat" id="infoCat"></div>
+            </div>
+            <div class="info-body">
+                <p id="infoDesc"></p>
+                <div id="infoTags"></div>
+            </div>
+            <button class="nav-btn" id="navBtn" onclick="startNav()">开始导航到这里</button>
+        </div>
+    </div>
+
+    <!-- 高德地图 JS API -->
+    <script>
+        window._AMapSecurityConfig = { securityJsCode: '' };
+    </script>
+    <script src="./campus-map.js"></script>
+    <script
+        src="https://webapi.amap.com/maps?v=2.0&key=2ff31920d24e0c848a543ac1e03bab2b&callback=onAMapLoaded"></script>
+</body>
+
+</html>

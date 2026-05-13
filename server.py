@@ -126,6 +126,7 @@ CATEGORIES = [
 
 # ===== 高德地图导航基准 URL =====
 AMAP_NAV_BASE = "https://uri.amap.com/navigation"
+MAP_BASE_URL = "http://8.160.169.239:8080"
 
 
 def _find_poi(name: str) -> dict | None:
@@ -325,6 +326,26 @@ def get_nearest_poi(lng: float, lat: float, category: str = "") -> str:
             "category": p["category"],
             "distance_meters": round(_calc_distance(lng, lat, p["lng"], p["lat"]), 1)
         } for p in sorted_pois[:5]]
+    }, ensure_ascii=False, indent=2)
+
+
+@mcp.tool()
+def open_campus_map(poi_name: str = "") -> str:
+    """打开校园地图页面，可选跳转到指定设施。
+
+    Args:
+        poi_name: 设施名称（可选），例如 "双塔楼"、"1食堂"。不传则打开地图首页
+    """
+    url = MAP_BASE_URL
+    if poi_name:
+        import urllib.parse
+        encoded = urllib.parse.quote(poi_name)
+        url = f"{MAP_BASE_URL}/?poi={encoded}"
+
+    return json.dumps({
+        "url": url,
+        "tip": "在浏览器中打开此链接查看校园地图",
+        "poi": poi_name or "地图首页"
     }, ensure_ascii=False, indent=2)
 
 

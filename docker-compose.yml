@@ -4,3 +4,11 @@ services:
     ports:
       - "8000:8000"
     restart: always
+
+  campus-web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./static:/usr/share/nginx/html:ro
+    restart: always
