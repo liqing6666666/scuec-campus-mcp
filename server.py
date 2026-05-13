@@ -8,7 +8,7 @@ import math
 import json
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("campus-map")
+mcp = FastMCP("campus-map", host="0.0.0.0", port=8000)
 
 # ===== 校园 POI 数据 =====
 CAMPUS_POIS = [
@@ -370,7 +370,7 @@ def get_outline_resource() -> str:
 def main():
     import sys
     if "--sse" in sys.argv:
-        mcp.run(transport="sse", host="0.0.0.0", port=8000)
+        mcp.run(transport="sse")
     else:
         mcp.run()
 
