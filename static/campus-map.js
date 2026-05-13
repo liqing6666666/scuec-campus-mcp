@@ -486,7 +486,10 @@ function onAMapLoaded() {
     if (targetPOI) {
         const name = decodeURIComponent(targetPOI);
         const found = campusPOIs.find(p => p.name === name);
-        if (found) setTimeout(() => showInfoPanel(found), 800);
+        if (found) setTimeout(() => {
+            window._addMarkers([found]);
+            showInfoPanel(found);
+        }, 800);
     }
 }
 
