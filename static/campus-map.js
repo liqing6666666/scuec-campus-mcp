@@ -378,13 +378,28 @@ function showCoordPopup(lng, lat, x, y) {
 }
 
 function copyCoord(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        const popup = document.getElementById('coordPopup');
-        const tip = popup.querySelector('.coord-tip');
+    const popup = document.getElementById('coordPopup');
+    const tip = popup.querySelector('.coord-tip');
+    const showCopied = () => {
         tip.textContent = '已复制: ' + text;
         tip.style.color = '#52c41a';
         setTimeout(() => { tip.style.color = '#999'; tip.textContent = '点击数字复制 lng, lat 格式'; }, 1500);
-    });
+    };
+    // HTTPS 环境用 clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showCopied);
+    } else {
+        // HTTP 回退方案
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showCopied();
+    }
 }
 
 function exportCoords() {
