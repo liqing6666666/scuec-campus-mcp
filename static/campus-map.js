@@ -340,7 +340,7 @@ function showToast(msg, duration) {
 function locateMe() {
     if (!window._map) return;
     if (isDesktop()) {
-        showToast('电脑端无 GPS 硬件，请使用右下角 "手动设置位置" 或输入经纬度定位', 4000);
+        showToast('电脑端无GPS硬件，请使用右上角的"手动设置位置"功能标注自己的位置', 6000);
         return;
     }
     window._map.plugin('AMap.Geolocation', () => {
@@ -473,7 +473,10 @@ function showCategoryAll(catKey) {
 // ===== 搜索 =====
 function filterPOIs() {
     const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    const dropdown = document.getElementById('searchDropdown');
+
     if (!keyword) {
+        dropdown.style.display = 'none';
         if (window._allMarkers && window._map) {
             window._allMarkers.forEach(m => window._map.remove(m));
             window._allMarkers = [];
@@ -481,14 +484,56 @@ function filterPOIs() {
         return;
     }
     if (!window._map) return;
+
     const filtered = campusPOIs.filter(p =>
         p.name.toLowerCase().includes(keyword) ||
         p.desc.toLowerCase().includes(keyword) ||
         p.category.toLowerCase().includes(keyword) ||
         (p.tags || []).some(t => t.includes(keyword))
     );
-    if (window._addMarkers) window._addMarkers(filtered);
+
+    // 渲染下拉建议列表（最多显示10条）
+    const maxShow = 10;
+    if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="dropdown-empty">未找到匹配设施</div>';
+    } else {
+        let html = '';
+        filtered.slice(0, maxShow).forEach(poi => {
+            const cat = categories.find(c => c.key === poi.category);
+            const icon = cat ? cat.icon : '';
+            html += `<div class="dropdown-item" onclick="event.stopPropagation();selectSearchResult('${poi.name.replace(/'/g, "\\'")}')">
+                <span class="di-icon">${icon}</span>
+                <span class="di-name">${poi.name}</span>
+                <span class="di-cat">${poi.category}</span>
+            </div>`;
+        });
+        if (filtered.length > maxShow) {
+            html += `<div class="dropdown-empty">还有 ${filtered.length - maxShow} 个结果，请继续输入</div>`;
+        }
+        dropdown.innerHTML = html;
+    }
+    dropdown.style.display = 'block';
 }
+
+function selectSearchResult(name) {
+    const poi = campusPOIs.find(p => p.name === name);
+    if (!poi) return;
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchDropdown').style.display = 'none';
+    window._addMarkers([poi]);
+    showInfoPanel(poi);
+    window._map.setCenter([poi.lng, poi.lat]);
+    window._map.setZoom(17);
+}
+
+// 点击搜索框外部关闭下拉
+document.addEventListener('click', function (e) {
+    const bar = document.querySelector('.search-bar');
+    if (bar && !bar.contains(e.target)) {
+        const dropdown = document.getElementById('searchDropdown');
+        if (dropdown) dropdown.style.display = 'none';
+    }
+});
 
 // ===== 坐标拾取工具 =====
 let pickMode = false;
@@ -652,7 +697,7 @@ function onAMapLoaded() {
             const color = getCatColor(poi.category);
             const marker = new AMap.Marker({
                 position: [poi.lng, poi.lat],
-                content: `<div class="marker-bubble" style="border-color:${color};color:${color}">${poi.name}<div class="marker-arrow" style="border-top-color:#fff"></div></div>`,
+                content: `<div class="marker-bubble" style="border-color:${color};color:${color}">${poi.name}<div class="marker-arrow"></div></div>`,
                 offset: new AMap.Pixel(0, -20),
                 title: poi.name
             });

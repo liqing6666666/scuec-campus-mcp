@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>中南民族大学 - 校园百事通地图</title>
+    <link rel="icon" href="./my-icon.png" type="image/png">
     <link rel="stylesheet" href="./campus-map.css">
 </head>
 
@@ -18,7 +19,8 @@
         <!-- 左侧分类栏 -->
         <div class="sidebar">
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="搜索地点..." oninput="filterPOIs()" />
+                <input type="text" id="searchInput" placeholder="搜索地点..." oninput="filterPOIs()" onfocus="filterPOIs()" autocomplete="off" />
+                <div id="searchDropdown" class="search-dropdown" style="display:none"></div>
             </div>
             <div id="sidebarList"></div>
         </div>
