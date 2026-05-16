@@ -397,24 +397,18 @@ function copyCoord(text) {
 }
 
 function fallbackCopy(text, cb) {
-    // 方式2: contentEditable + selection (兼容 HTTP)
-    const el = document.createElement('div');
-    el.contentEditable = 'true';
-    el.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
-    el.textContent = text;
-    document.body.appendChild(el);
-
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
+    // 方式2: textarea + execCommand (兼容 HTTP)
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.setSelectionRange(0, ta.value.length);
 
     let ok = false;
     try { ok = document.execCommand('copy'); } catch (e) {}
-
-    sel.removeAllRanges();
-    document.body.removeChild(el);
+    document.body.removeChild(ta);
 
     if (ok) { cb(); return; }
 
