@@ -387,7 +387,7 @@ function copyCoord(text) {
     };
 
     // 方式1: clipboard API (需 HTTPS)
-    if (navigator.clipboard && window.isSecureContext) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(text).then(showCopied).catch(() => {
             fallbackCopy(text, showCopied);
         });
