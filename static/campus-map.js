@@ -385,21 +385,41 @@ function copyCoord(text) {
         tip.style.color = '#52c41a';
         setTimeout(() => { tip.style.color = '#999'; tip.textContent = '点击数字复制 lng, lat 格式'; }, 1500);
     };
-    // HTTPS 环境用 clipboard API
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(showCopied);
+
+    // 方式1: clipboard API (需 HTTPS)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(showCopied).catch(() => {
+            fallbackCopy(text, showCopied);
+        });
     } else {
-        // HTTP 回退方案
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showCopied();
+        fallbackCopy(text, showCopied);
     }
+}
+
+function fallbackCopy(text, cb) {
+    // 方式2: contentEditable + selection (兼容 HTTP)
+    const el = document.createElement('div');
+    el.contentEditable = 'true';
+    el.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+    el.textContent = text;
+    document.body.appendChild(el);
+
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+
+    sel.removeAllRanges();
+    document.body.removeChild(el);
+
+    if (ok) { cb(); return; }
+
+    // 方式3: 兜底 — 弹出可复制文本
+    prompt('复制以下坐标 (Ctrl+C):', text);
 }
 
 function exportCoords() {
@@ -445,6 +465,11 @@ function onAMapLoaded() {
 
     // 地图点击拾取坐标 / 手动设置位置
     map.on('click', function (e) {
+        // 如果点击的是坐标弹窗内的元素，忽略
+        if (e.originEvent && e.originEvent.target &&
+            e.originEvent.target.closest && e.originEvent.target.closest('.coord-popup')) {
+            return;
+        }
         const lng = e.lnglat.getLng();
         const lat = e.lnglat.getLat();
 
