@@ -365,9 +365,10 @@ function togglePickMode() {
 
 function showCoordPopup(lng, lat, x, y) {
     const popup = document.getElementById('coordPopup');
+    const coordText = lng.toFixed(6) + ',' + lat.toFixed(6);
     popup.innerHTML = `
-        <div>经度: <span class="coord-val" onclick="copyCoord('${lng},${lat}')">${lng.toFixed(6)}</span></div>
-        <div>纬度: <span class="coord-val" onclick="copyCoord('${lng},${lat}')">${lat.toFixed(6)}</span></div>
+        <div>经度: <span class="coord-val" data-coord="${coordText}">${lng.toFixed(6)}</span></div>
+        <div>纬度: <span class="coord-val" data-coord="${coordText}">${lat.toFixed(6)}</span></div>
         <div class="coord-tip">点击数字复制 lng, lat 格式</div>
     `;
     popup.style.display = 'block';
@@ -444,6 +445,15 @@ function onAMapLoaded() {
     });
 
     window._map = map;
+
+    // 坐标弹窗 — 用事件委托捕获点击（绕过 AMap 事件系统）
+    document.addEventListener('mousedown', function (e) {
+        const el = e.target.closest('.coord-val');
+        if (!el) return;
+        e.stopPropagation();
+        e.preventDefault();
+        copyCoord(el.getAttribute('data-coord'));
+    }, true);
 
     // 校园轮廓
     const campusPolygon = new AMap.Polygon({
